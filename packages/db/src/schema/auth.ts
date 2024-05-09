@@ -1,46 +1,53 @@
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
   index,
-  int,
+  integer,
+  json,
+  pgSchema,
   primaryKey,
   text,
   timestamp,
-  varchar,
-} from "drizzle-orm/mysql-core";
+  uuid,
+} from "drizzle-orm/pg-core";
 
-import { mySqlTable } from "./_table";
+import type { UserPreferences } from "@applier/validators";
+import { v7 } from "@applier/id";
+import { jobApplications } from "./job";
 
-export const users = mySqlTable("user", {
-  id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
-  emailVerified: timestamp("emailVerified", {
+export const authSchema = pgSchema("auth");
+
+export const users = authSchema.table("user", {
+  id: uuid("id").notNull().primaryKey().$default(v7),
+  name: text("name"),
+  email: text("email").notNull(),
+  emailVerified: timestamp("email_verified", {
     mode: "date",
-    fsp: 3,
-  }).default(sql`CURRENT_TIMESTAMP(3)`),
-  image: varchar("image", { length: 255 }),
+  }).defaultNow(),
+  image: text("image"),
+  preferences: json("preferences").$type<UserPreferences>(),
 });
+
+export type User = typeof users.$inferSelect;
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  applications: many(jobApplications)
 }));
 
-export const accounts = mySqlTable(
+export const accounts = authSchema.table(
   "account",
   {
-    userId: varchar("userId", { length: 255 }).notNull(),
-    type: varchar("type", { length: 255 })
-      .$type<"oauth" | "oidc" | "email">()
-      .notNull(),
-    provider: varchar("provider", { length: 255 }).notNull(),
-    providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
-    refresh_token: varchar("refresh_token", { length: 255 }),
+    userId: uuid("user_id").notNull(),
+    type: text("type").$type<"oauth" | "oidc" | "email">().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("provider_account_id").notNull(),
+    refresh_token: text("refresh_token"),
     access_token: text("access_token"),
-    expires_at: int("expires_at"),
-    token_type: varchar("token_type", { length: 255 }),
-    scope: varchar("scope", { length: 255 }),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
     id_token: text("id_token"),
-    session_state: varchar("session_state", { length: 255 }),
+    session_state: text("session_state"),
   },
   (account) => ({
     compoundKey: primaryKey({
@@ -50,21 +57,21 @@ export const accounts = mySqlTable(
   }),
 );
 
+export type Account = typeof accounts.$inferSelect;
+
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
 }));
 
-export const sessions = mySqlTable(
+export const sessions = authSchema.table(
   "session",
   {
-    sessionToken: varchar("sessionToken", { length: 255 })
-      .notNull()
-      .primaryKey(),
-    userId: varchar("userId", { length: 255 }).notNull(),
+    sessionToken: text("session_token").notNull().primaryKey(),
+    userId: uuid("user_id").notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (session) => ({
-    userIdIdx: index("userId_idx").on(session.userId),
+    userIdIdx: index("user_id_idx").on(session.userId),
   }),
 );
 
@@ -72,11 +79,11 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));
 
-export const verificationTokens = mySqlTable(
-  "verificationToken",
+export const verificationTokens = authSchema.table(
+  "verification_token",
   {
-    identifier: varchar("identifier", { length: 255 }).notNull(),
-    token: varchar("token", { length: 255 }).notNull(),
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (vt) => ({

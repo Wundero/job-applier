@@ -1,14 +1,14 @@
-import { Client } from "@planetscale/database";
-import { drizzle } from "drizzle-orm/planetscale-serverless";
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 
-import { connectionStr } from "./config";
+import { env } from "./config";
 import * as auth from "./schema/auth";
-import * as post from "./schema/post";
+import * as job from "./schema/job";
 
 export * from "drizzle-orm/sql";
 export { alias } from "drizzle-orm/mysql-core";
 
-export const schema = { ...auth, ...post };
+export const schema = { ...auth, ...job };
 
-const psClient = new Client({ url: connectionStr.href });
-export const db = drizzle(psClient, { schema });
+const dbClient = neon(env.DB_URL);
+export const db = drizzle(dbClient, { schema });
