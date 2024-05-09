@@ -16,4 +16,8 @@ export default {
       },
     },
   },
+  corePlugins: {
+    // This must be disabled to prevent the extension from messing with web pages.
+    preflight: false,
+  },
 } satisfies Config;
