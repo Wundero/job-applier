@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "Geist-Sans";
+    src:
+      url("../fonts/geist/sans/GeistVF.woff2") format("woff2-variations"),
+      url("../fonts/geist/sans/GeistVF.woff") format("woff-variations");
+    font-weight: bold;
+  }
+  @font-face {
+    font-family: "Geist-Mono";
+    src:
+      url("../fonts/geist/mono/GeistMonoVF.woff2") format("woff2-variations"),
+      url("../fonts/geist/mono/GeistMonoVF.woff") format("woff-variations");
+    font-weight: bold;
+  }
+}

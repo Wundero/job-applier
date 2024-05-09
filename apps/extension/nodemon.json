@@ -3,7 +3,12 @@
     "__DEV__": "true"
   },
   "watch": [
-    "src", "utils", "vite.config.ts", "manifest.json", "manifest.dev.json"
+    "src",
+    "utils",
+    "vite.config.ts",
+    "manifest.json",
+    "manifest.dev.json",
+    "tailwind.config.ts"
   ],
   "ext": "tsx,css,html,ts,json",
   "ignore": [

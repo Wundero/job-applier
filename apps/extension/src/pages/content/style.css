@@ -1,6 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-.langin{
-    color: aliceblue;
+
+@layer base {
+  @font-face {
+    font-family: "Geist-Sans";
+    src:
+      url("../../assets/fonts/geist/sans/GeistVF.woff2") format("woff2-variations"),
+      url("../../assets/fonts/geist/sans/GeistVF.woff") format("woff-variations");
+    font-weight: bold;
+  }
+  @font-face {
+    font-family: "Geist-Mono";
+    src:
+      url("../../assets/fonts/geist/mono/GeistMonoVF.woff2") format("woff2-variations"),
+      url("../../assets/fonts/geist/mono/GeistMonoVF.woff") format("woff-variations");
+    font-weight: bold;
+  }
 }
