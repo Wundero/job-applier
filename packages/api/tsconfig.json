@@ -1,9 +1,13 @@
 {
-  "extends": "@acme/tsconfig/internal-package.json",
+  "extends": "@applier/tsconfig/internal-package.json",
   "compilerOptions": {
     "outDir": "dist",
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
